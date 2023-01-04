@@ -7,6 +7,7 @@ import authProvider from "./provider/authProvider";
 import client from "./db/connection";
 import getTenantRouter from "./routes/tenant";
 import getSubscribeRouter from "./routes/subscribe";
+import getStaticRouter from "./static/static";
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use(express.json());
 
 app.use("/api/v1/tenant", getTenantRouter());
 app.use("/subscribe", getSubscribeRouter());
+app.use("/static", getStaticRouter());
 
 process.on("SIGTERM", () => {
   client.close().then(() => {

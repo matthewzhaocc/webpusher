@@ -1,3 +1,4 @@
+const serviceWorker = `
 /*
  Copyright 2014 Google Inc. All Rights Reserved.
  Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,6 +36,9 @@ self.addEventListener("activate", function (e) {
   // fetch or message events that are fired in the interim. When possible, do work during the install phase.
   // It will NOT be fired each time the service worker is revived after being terminated.
   // To perform an action when the service worker is revived, include that logic in the
-  // `onfetch` or `onmessage` event listeners.
+  // \`onfetch\` or \`onmessage\` event listeners.
   console.log("Activate event:", e);
 });
+`;
+
+export default serviceWorker;

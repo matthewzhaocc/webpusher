@@ -10,23 +10,28 @@ import authProvider from "../provider/authProvider";
 const getSubscribeRouter = () => {
   const router = express.Router();
 
-  router.get("/:tenantId/.well-known/vapid-pubkey.json", async (req, res) => {
-    const pubKey = await redis.get(req.params.tenantId);
-    if (pubKey) {
-      res.send({ pubKey });
+  router.options("/:tenantId/.well-known/vapid-pubkey.json", corsAllowAll);
+  router.get(
+    "/:tenantId/.well-known/vapid-pubkey.json",
+    corsAllowAll,
+    async (req, res) => {
+      const pubKey = await redis.get(req.params.tenantId);
+      if (pubKey) {
+        res.send({ pubKey });
+        return;
+      }
+
+      const tenant = await tenantProvider.getByIdentifier(req.params.tenantId);
+      if (tenant) {
+        await redis.set(req.params.tenantId, tenant.pubKey);
+        res.send({ pubKey: tenant.pubKey });
+        return;
+      }
+
+      res.status(404).send();
       return;
     }
-
-    const tenant = await tenantProvider.getByIdentifier(req.params.tenantId);
-    if (tenant) {
-      await redis.set(req.params.tenantId, tenant.pubKey);
-      res.send({ pubKey: tenant.pubKey });
-      return;
-    }
-
-    res.status(404).send();
-    return;
-  });
+  );
 
   router.options("/:tenantId", corsAllowAll);
   router.put(
